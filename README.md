@@ -1,7 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/kdfTwECC)
 # Midterm p1: Report on Analysis of Fibonacci Series
 * **Author**: Catherine Zhang
-* **GitHub Repo**: [GitHub Classroom Repo]
+* **GitHub Repo**: [GitHub Classroom Repo](https://github.com/CS5008Fall2025/midterm-report-Cat97-97)
 * **Semester**: Fall 2025
 * **Languages Used**: C, Python
 
@@ -73,16 +73,23 @@ Figures 7–9: Cross-language speedup (Python/C). Ratios > 1 indicate Python slo
 
 Observations: function-call overhead, interpreter vs compiled execution, recursion depth limits, integer size/overflow (C `uint64_t` vs Python big ints), timer resolution, and cache warmup effects all influence absolute timings but not asymptotic trends.
 
+Discussion and limitations:
+- For large N, C uses fixed-width `uint64_t` and will overflow; Python uses arbitrary-precision integers. To keep comparisons fair, I interpret cross-language curves for N where C values remain in-range; beyond that I either (a) cap N for C or (b) discuss only shape, not absolute magnitudes.
+- Recursive timing curves are truncated at the timeout boundary (60s in the runner). Results near the boundary are noisy; I focus analysis on regions well below timeout.
+- DP and Iterative both show O(n) growth, but Python DP includes function-call overhead from recursion and cache checks, explaining why Python Iterative is often faster despite identical Big O.
+- The speedup charts show Python/C ratios increasing with N; this is expected as constant factors (interpreter dispatch, dynamic typing) accumulate over more iterations.
+- Timer resolution: I used `clock_gettime` in C and `time.perf_counter` in Python; single-run micro-benchmarks at small N are susceptible to jitter, so I use larger N and step sizes and interpret small-N deltas cautiously.
+
 ## Language Analysis
 
 ### Language 1: C
-Focus areas: manual memory management, fixed-width integers (`uint64_t`) and overflow considerations, `clock_gettime` timing, iterative array vs minimal-state variants, and stack vs heap for safety.
+Focus areas: manual memory management, fixed-width integers (`uint64_t`) and overflow considerations, `clock_gettime` timing, iterative array vs minimal-state variants, and stack vs heap for safety. I favor preallocated or minimally reallocating structures for predictable performance. Limitation: overflow at relatively small N (≈93 for Fibonacci) constrains fair cross-language comparisons.
 
 ### Language 2: Python
-Focus areas: `functools.lru_cache` for memoization, list-based tabulation, recursion depth and performance, dynamic big integers simplifying correctness at large N.
+Focus areas: `functools.lru_cache` for memoization, list-based tabulation, recursion depth and performance, dynamic big integers simplifying correctness at large N. Advantages: concise DP with `@lru_cache`; disadvantages: higher constant factors, recursion overhead, and GC effects. Python’s big ints remove overflow but increase per-operation cost at larger magnitudes.
 
 ### Comparison and Discussion Between Experiences
-Contrast ergonomics and performance; align empirical curves with Big O; discuss how language features (caching, big ints, allocation) influenced results and how I kept comparisons fair.
+Contrast: C is consistently faster due to compilation and simpler numeric types; Python is more ergonomic and expressive, particularly for memoization. Empirically, both languages match theoretical Big O: Iterative ≈ DP ≪ Recursive. Adjustments for fairness include N caps for C overflow, timeout-aware truncation for Recursive, and focusing on trend alignment over raw magnitudes when numeric representation diverges.
 
 ## Conclusions / Reflection
 Key takeaways: iterative and DP are O(n) and dominate recursive at modest N; Python’s ease vs C’s speed; pitfalls (overflow, recursion limits) and how they change interpretation. Future work: fast doubling, matrix exponentiation.
@@ -126,5 +133,9 @@ python3 fib_runner.py 200 --step 5 --out fib_py.csv --exec "python3 fib.py"
 Create plots from `timings_*.csv` and `ops_*.csv` and include them in this README.
 
 ## References
-- ACM format references will be added in final draft (algorithm texts, language docs).
+1) T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein. Introduction to Algorithms, 4th ed. MIT Press, 2022.
+2) Python Software Foundation. “functools — Higher-order functions and operations on callable objects.” In: Python 3.12. https://docs.python.org/3/library/functools.html (accessed Oct. 17, 2025).
+3) Python Software Foundation. “time — Time access and conversions.” In: Python 3.12. https://docs.python.org/3/library/time.html (accessed Oct. 17, 2025).
+4) The Open Group. “clock_gettime() — Get time.” The Open Group Base Specifications Issue 7, 2018 Edition. https://pubs.opengroup.org/onlinepubs/9699919799/functions/clock_gettime.html (accessed Oct. 17, 2025).
+5) Wikipedia. “Fibonacci number.” https://en.wikipedia.org/wiki/Fibonacci_number (accessed Oct. 17, 2025).
 
