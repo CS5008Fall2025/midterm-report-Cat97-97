@@ -5,11 +5,9 @@
 * **Semester**: Fall 2025
 * **Languages Used**: C, Python
 
-> You are free to rename/ modify these sections as you need (and don't forget to remove this line..)
-
 ## Overview
 
-This report analyzes the runtime and operation counts of three Fibonacci algorithms: iterative, naive recursive, and dynamic programming (memoized and tabulation), implemented in C and Python. I provide Big O analysis with reasoning and pseudocode, then compare empirical results across algorithms and languages.
+This report analyzes three Fibonacci algorithms—iterative, naive recursive, and dynamic programming (memoized/tabulation)—implemented in C and Python. I present Big O (time and space) with pseudocode and compare empirical results across algorithms and languages.
 
 ### Pseudocode and Big O
 
@@ -118,7 +116,7 @@ def fib_dp_single(n: int) -> int:
 Contrast: C is consistently faster due to compilation and simpler numeric types; Python is more ergonomic and expressive, particularly for memoization. Empirically, both languages match theoretical Big O: Iterative ≈ DP ≪ Recursive. Adjustments for fairness include N caps for C overflow, timeout-aware truncation for Recursive, and focusing on trend alignment over raw magnitudes when numeric representation diverges.
 
 ## Conclusions / Reflection
-Key takeaways: iterative and DP are O(n) and dominate recursive at modest N; Python’s ease vs C’s speed; pitfalls (overflow, recursion limits) and how they change interpretation. Future work: fast doubling, matrix exponentiation.
+Key takeaways: iterative and DP are O(n) and dominate recursive at modest N; Python favors rapid development while C delivers speed; pitfalls (overflow, recursion limits) shape interpretation and fairness choices. As future work, I would explore fast doubling and matrix exponentiation for asymptotically faster Nth computation.
 
 ## Reproduction & Usage
 
