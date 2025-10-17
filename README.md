@@ -44,30 +44,30 @@ fib(n):
 
 ## Empirical Data & Discussion 
 
-I generated timing and operation CSVs using `fib_runner.py` (C and Python variants). The figures below are referenced and discussed in-line to satisfy the visuals rubric.
+I generated timing and operation CSVs using `fib_runner.py` (C and Python variants). Unless otherwise noted, runs use N = 1..50 with step = 5 and a 60s timeout; timings are single-run wall-clock measurements using `clock_gettime` (C) and `time.perf_counter` (Python). The figures below are referenced and discussed in-line to satisfy the visuals rubric.
 
 ![C Iterative vs DP Runtime](iter_vs_dp_c.png)
-Figure 1: C runtime for Iterative vs DP shows near-identical O(n) growth; minor differences from memory access patterns and function-call overhead.
+Figure 1 (N = 1..50, step = 5): C runtime for Iterative vs DP shows near-identical O(n) growth; minor differences from memory access patterns and function-call overhead.
 
 ![Python Iterative vs DP Runtime](iter_vs_dp_py.png)
-Figure 2: Python runtime for Iterative vs DP also aligns with O(n); absolute times are higher than C due to interpreter overhead.
+Figure 2 (N = 1..50, step = 5): Python runtime for Iterative vs DP also aligns with O(n); absolute times are higher than C due to interpreter overhead.
 
 ![C Recursive Runtime (Log Scale)](recursive_c_log.png)
-Figure 3: C recursive runtime on a log scale illustrates exponential growth consistent with Θ(φ^n). DP/Iterative dominate quickly.
+Figure 3 (N = 1..50, step = 5): C recursive runtime on a log scale illustrates exponential growth consistent with Θ(φ^n). DP/Iterative dominate quickly.
 
 ![Python Recursive Runtime (Log Scale)](recursive_py_log.png)
-Figure 4: Python recursive runtime on a log scale exhibits even steeper observed growth due to recursion overhead and interpreter cost.
+Figure 4 (N = 1..50, step = 5): Python recursive runtime on a log scale exhibits even steeper observed growth due to recursion overhead and interpreter cost.
 
 ![C Operations vs N](ops_c.png)
-Figure 5: C operations: Iterative and DP scale linearly; Recursive explodes exponentially until timeout thresholds.
+Figure 5 (N = 1..50, step = 5): C operations—Iterative and DP scale linearly; Recursive explodes exponentially until timeout thresholds.
 
 ![Python Operations vs N](ops_py.png)
-Figure 6: Python operations mirror C trends; DP and Iterative differ slightly due to implementation details and cache behavior.
+Figure 6 (N = 1..50, step = 5): Python operations mirror C trends; DP and Iterative differ slightly due to implementation details and cache behavior.
 
 ![Speedup Iterative (Python/C)](speedup_iter.png)
 ![Speedup DP (Python/C)](speedup_dp.png)
 ![Speedup Recursive (Python/C)](speedup_rec.png)
-Figures 7–9: Cross-language speedup (Python/C). Ratios > 1 indicate Python slower than C. The gap grows with N, especially for Recursive.
+Figures 7–9 (N = 1..50, step = 5): Cross-language speedup (Python/C). Ratios > 1 indicate Python slower than C. The gap grows with N, especially for Recursive.
 
 Observations: function-call overhead, interpreter vs compiled execution, recursion depth limits, integer size/overflow (C `uint64_t` vs Python big ints), timer resolution, and cache warmup effects all influence absolute timings but not asymptotic trends.
 
@@ -154,7 +154,7 @@ python3 fib_runner.py 200 --step 5 --out fib_c.csv --exec "./fib.exe"
 python3 fib_runner.py 200 --step 5 --out fib_py.csv --exec "python3 fib.py"
 ```
 
-Create plots from `timings_*.csv` and `ops_*.csv` and include them in this README.
+Figures were generated using `plot_fib.py` from the CSVs (`timings_*.csv`, `ops_*.csv`).
 
 ## References
 1) T. H. Cormen, C. E. Leiserson, R. L. Rivest, and C. Stein. Introduction to Algorithms, 4th ed. MIT Press, 2022.
