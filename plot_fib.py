@@ -32,13 +32,19 @@ def parse_series(rows: List[Dict[str, str]]):
     return n, it, dp, rec
 
 
+def to_ms(values: List[float]) -> List[float]:
+    return [v * 1000 if (v is not None and not math.isnan(v)) else math.nan for v in values]
+
+
 def plot_iter_dp(n, it, dp, title: str, outfile: Path):
+    it_ms = to_ms(it)
+    dp_ms = to_ms(dp)
     plt.figure(figsize=(8, 5))
-    plt.plot(n, it, marker="o", label="Iterative")
-    plt.plot(n, dp, marker="s", label="Dynamic Programming")
+    plt.plot(n, it_ms, marker="o", label="Iterative")
+    plt.plot(n, dp_ms, marker="s", label="Dynamic Programming")
     plt.title(title)
-    plt.xlabel("N")
-    plt.ylabel("Time (s)")
+    plt.xlabel("Input Size (N)")
+    plt.ylabel("Execution Time (ms)")
     plt.legend()
     plt.grid(True, linestyle=":", alpha=0.6)
     plt.tight_layout()
@@ -47,12 +53,13 @@ def plot_iter_dp(n, it, dp, title: str, outfile: Path):
 
 
 def plot_recursive_log(n, rec, title: str, outfile: Path):
+    rec_ms = to_ms(rec)
     plt.figure(figsize=(8, 5))
-    plt.plot(n, rec, marker="^", color="crimson", label="Recursive")
+    plt.plot(n, rec_ms, marker="^", color="crimson", label="Recursive")
     plt.yscale("log")
     plt.title(title + " (Log-Scale Y)")
-    plt.xlabel("N")
-    plt.ylabel("Time (s, log)")
+    plt.xlabel("Input Size (N)")
+    plt.ylabel("Execution Time (ms, log)")
     plt.grid(True, which="both", linestyle=":", alpha=0.6)
     plt.legend()
     plt.tight_layout()
@@ -66,8 +73,8 @@ def plot_ops(n, it, dp, rec, title: str, outfile: Path):
     plt.plot(n, dp, marker="s", label="DP Ops")
     plt.plot(n, rec, marker="^", label="Recursive Ops")
     plt.title(title)
-    plt.xlabel("N")
-    plt.ylabel("Operations (unitless)")
+    plt.xlabel("Input Size (N)")
+    plt.ylabel("Operation Count (unitless)")
     plt.legend()
     plt.grid(True, linestyle=":", alpha=0.6)
     plt.tight_layout()
@@ -91,7 +98,7 @@ def plot_speedup(n, c_times, py_times, label: str, title: str, outfile: Path):
     plt.plot(n, sp, marker="d", label=label)
     plt.axhline(1.0, color="gray", linestyle="--", linewidth=1)
     plt.title(title)
-    plt.xlabel("N")
+    plt.xlabel("Input Size (N)")
     plt.ylabel("Speedup (Python/C)")
     plt.legend()
     plt.grid(True, linestyle=":", alpha=0.6)
@@ -134,11 +141,9 @@ def main():
     plot_ops(n_py_ops, it_py_o, dp_py_o, rec_py_o, "Python: Operations vs N", ROOT / "ops_py.png")
 
     # Cross-language speedup (Python/C) for each algorithm
-    # Align by index; assumes same Ns for both datasets
     if n_c == n_py:
         plot_speedup(n_c, it_c_t, it_py_t, "Iterative", "Speedup (Python/C) - Iterative", ROOT / "speedup_iter.png")
         plot_speedup(n_c, dp_c_t, dp_py_t, "DP", "Speedup (Python/C) - DP", ROOT / "speedup_dp.png")
-        # recursive likely missing at higher N; plot where present
         plot_speedup(n_c, rec_c_t, rec_py_t, "Recursive", "Speedup (Python/C) - Recursive", ROOT / "speedup_rec.png")
     else:
         print("N grids differ between C and Python; skipping speedup charts.")
