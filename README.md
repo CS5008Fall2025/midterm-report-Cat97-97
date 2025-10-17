@@ -1,6 +1,6 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/kdfTwECC)
 # Midterm p1: Report on Analysis of Fibonacci Series
-* **Author**: Catherine Zhang
+* **Author**: Sitong Zhang
 * **GitHub Repo**: [GitHub Classroom Repo](https://github.com/CS5008Fall2025/midterm-report-Cat97-97)
 * **Semester**: Fall 2025
 * **Languages Used**: C, Python
@@ -85,8 +85,34 @@ Discussion and limitations:
 ### Language 1: C
 Focus areas: manual memory management, fixed-width integers (`uint64_t`) and overflow considerations, `clock_gettime` timing, iterative array vs minimal-state variants, and stack vs heap for safety. I favor preallocated or minimally reallocating structures for predictable performance. Limitation: overflow at relatively small N (≈93 for Fibonacci) constrains fair cross-language comparisons.
 
+```12:26:/Users/catherinezhang/Desktop/midterm-report-Cat97-97/fib.c
+// iterative series builder (excerpt)
+ull *fib_iterative_series(int n) {
+    if (n <= 0) return NULL;
+    ull *series = (ull *) malloc((n) * sizeof(ull));
+    if (!series) return NULL;
+    if (n >= 1) series[0] = 1;
+    if (n >= 2) series[1] = 1;
+    for (int i = 3; i <= n; i++) {
+        OPS++;
+        series[i - 1] = series[i - 2] + series[i - 3];
+    }
+    return series;
+}
+```
+
 ### Language 2: Python
 Focus areas: `functools.lru_cache` for memoization, list-based tabulation, recursion depth and performance, dynamic big integers simplifying correctness at large N. Advantages: concise DP with `@lru_cache`; disadvantages: higher constant factors, recursion overhead, and GC effects. Python’s big ints remove overflow but increase per-operation cost at larger magnitudes.
+
+```23:55:/Users/catherinezhang/Desktop/midterm-report-Cat97-97/fib.py
+@lru_cache(maxsize=None)
+def fib_dp_single(n: int) -> int:
+    if n <= 2:
+        return 1
+    global OPS
+    OPS += 1
+    return fib_dp_single(n - 1) + fib_dp_single(n - 2)
+```
 
 ### Comparison and Discussion Between Experiences
 Contrast: C is consistently faster due to compilation and simpler numeric types; Python is more ergonomic and expressive, particularly for memoization. Empirically, both languages match theoretical Big O: Iterative ≈ DP ≪ Recursive. Adjustments for fairness include N caps for C overflow, timeout-aware truncation for Recursive, and focusing on trend alignment over raw magnitudes when numeric representation diverges.
